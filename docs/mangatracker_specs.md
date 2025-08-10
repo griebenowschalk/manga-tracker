@@ -221,3 +221,39 @@ Create a full‑stack manga reader application in a **Turborepo monorepo** with 
 - Reading progress saves & resumes (chapter + last page)
 - Reader renders smoothly and supports zoom + next/prev
 - Deployed on Railway with Postgres; env configured; HTTPS
+
+---
+
+## 🧪 Testing Stack & Strategy
+
+- **Runner:** **Jest** for the entire monorepo (frontend + backend) for a unified test toolchain.
+- **Transformer:** **@swc/jest** for fast TypeScript compilation.
+- **Frontend testing:** **@testing-library/react** + **@testing-library/user-event** for UI; **MSW** (Mock Service Worker) to stub backend calls.
+- **Backend testing:** Unit tests for pure functions; integration tests for Express routes using **supertest**.
+- **Database in tests:** Prefer **testcontainers** for ephemeral Postgres; alternatively use a temporary test DB with `prisma migrate deploy` in setup.
+- **Coverage goals:** ≥60% statements/branches initially; increase over time.
+- **Scripts:**
+  - Root: `pnpm test` (runs all packages)
+  - Backend: `pnpm -F @manga/backend test`
+  - Frontend: `pnpm -F @manga/frontend test`
+- **Suggested layout:**
+
+```
+apps/
+  backend/
+    __tests__/auth.test.ts
+    __tests__/search.test.ts
+    jest.config.ts
+  frontend/
+    __tests__/search.spec.tsx
+    __tests__/reader.spec.tsx
+    jest.config.ts
+packages/
+  shared/
+    jest.base.ts
+```
+
+- **Notes:**
+  - Validate inputs/outputs with zod in tests at API boundaries.
+  - FE tests use MSW to avoid live network; BE integration tests may hit real services or stubs.
+  - Seed minimal fixtures for favorites/progress flows.
