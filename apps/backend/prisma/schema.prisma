@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Source {
+  MANGADEX
+  WEBCENTRAL
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  displayName   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  preferences   Json?
+  favorites     Favorite[]
+  progress      ReadProgress[]
+  refreshTokens RefreshToken[]
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  source    Source
+  sourceId  String
+  title     String
+  coverUrl  String?
+  addedAt   DateTime @default(now())
+  User      User     @relation(fields: [userId], references: [id])
+  @@index([userId, source, sourceId], name: "favorite_lookup")
+}
+
+model ReadProgress {
+  id            String   @id @default(cuid())
+  userId        String
+  source        Source
+  mangaSourceId String
+  chapterId     String
+  chapterNum    Float?
+  lastPage      Int?
+  updatedAt     DateTime @updatedAt
+  User          User     @relation(fields: [userId], references: [id])
+  @@index([userId, source, mangaSourceId])
+}
+
+model RefreshToken {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  @@index([userId])
+}
