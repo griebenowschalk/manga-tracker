@@ -257,3 +257,63 @@ packages/
   - Validate inputs/outputs with zod in tests at API boundaries.
   - FE tests use MSW to avoid live network; BE integration tests may hit real services or stubs.
   - Seed minimal fixtures for favorites/progress flows.
+
+---
+
+## 📘 Read Progress Return Contract (API & UI)
+
+To ensure the UI can always resume reading from the last position—even if the manga is not a favorite—the backend MUST return the user's latest `ReadProgress` when fetching manga details.
+
+### Endpoint (new)
+
+**GET `/api/manga/:source/:id`**
+
+- Returns combined **manga overview**, **chapter list**, and **optional readProgress**.
+
+**Response (normalized)**
+
+```json
+{
+  "manga": {
+    "id": "string",
+    "source": "MANGADEX|WEBCENTRAL",
+    "title": "string",
+    "coverUrl": "string|null"
+  },
+  "chapters": [
+    {
+      "chapterId": "string",
+      "chapterNum": 12.0,
+      "title": "string|null",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "readProgress": {
+    "source": "MANGADEX|WEBCENTRAL",
+    "mangaSourceId": "string",
+    "chapterId": "string",
+    "chapterNum": 12.0,
+    "lastPage": 7,
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+Notes:
+
+- `readProgress` MAY be `null` if the user has never read this manga.
+- `chapterNum` MAY be `null` if unavailable from the source.
+- The existing endpoint `GET /api/manga/:source/:id/chapters` remains for lists-only use; the new overview endpoint is preferred for the details page.
+
+### UI Requirements
+
+- On `/manga/:source/:id`, if `readProgress` exists:
+  - Show **“Resume from Chapter {chapterNum}”** (fallback to chapterId if no number).
+  - Highlight the last-read chapter in the list.
+- On `/read/:source/:chapterId`, when opened via “Resume”, auto-scroll to `lastPage` if applicable.
+
+### Acceptance Criteria
+
+- Calling `GET /api/manga/:source/:id` as an authenticated user returns `readProgress` when present in DB.
+- Removing a favorite **does not** delete `ReadProgress`.
+- Reading a chapter updates `ReadProgress` and subsequent calls to the overview endpoint reflect the new position.
