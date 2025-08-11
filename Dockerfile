@@ -8,13 +8,13 @@ COPY . .
 # Install pnpm globally
 RUN npm install -g pnpm
 
-# Install root dependencies (dev tools like turbo, eslint)
+# Install dependencies from the root
 RUN cd /app && echo "Y" | pnpm install --prod=false
 
-# Install shared package dependencies
+# Install shared package deps (explicit to avoid workspace edge-cases)
 RUN cd /app/packages/shared && echo "Y" | pnpm install --prod=false
 
-# Install backend dependencies
+# Install backend deps
 RUN cd /app/apps/backend && echo "Y" | pnpm install --prod=false
 
 # Build the shared package first
@@ -23,7 +23,7 @@ RUN cd /app && pnpm --filter=@manga/shared build
 # Build the backend
 RUN cd /app && pnpm build:backend
 
-# Set working directory to backend
+# Runtime from backend directory
 WORKDIR /app/apps/backend
 
 EXPOSE 3000
