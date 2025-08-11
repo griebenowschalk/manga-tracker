@@ -8,11 +8,11 @@ COPY . .
 # Install pnpm globally
 RUN npm install -g pnpm
 
-# Install dependencies from the root
-RUN pnpm install --frozen-lockfile
+# Install dependencies from the root (ensure we're in the right context)
+RUN cd /app && pnpm install --frozen-lockfile
 
 # Build the backend
-RUN pnpm build:backend
+RUN cd /app && pnpm build:backend
 
 # Set working directory to backend
 WORKDIR /app/apps/backend
