@@ -1,0 +1,10 @@
+[build]
+builder = "dockerfile"
+
+[deploy]
+startCommand = "pnpm start:backend"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+
+[deploy.envs]
+NODE_ENV = "production"
