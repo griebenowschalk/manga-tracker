@@ -9,7 +9,7 @@ COPY . .
 RUN npm install -g pnpm
 
 # Install dependencies from the root (ensure we're in the right context)
-RUN cd /app && pnpm install --frozen-lockfile
+RUN cd /app && pnpm install
 
 # Build the backend
 RUN cd /app && pnpm build:backend
