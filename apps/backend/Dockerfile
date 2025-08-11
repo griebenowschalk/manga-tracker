@@ -8,8 +8,14 @@ COPY . .
 # Install pnpm globally
 RUN npm install -g pnpm
 
-# Install dependencies from the root (ensure we're in the right context)
-RUN cd /app && pnpm install --ignore-workspace
+# Install root dependencies (dev tools like turbo, eslint)
+RUN cd /app && echo "Y" | pnpm install --prod=false
+
+# Install shared package dependencies
+RUN cd /app/packages/shared && echo "Y" | pnpm install --prod=false
+
+# Install backend dependencies
+RUN cd /app/apps/backend && echo "Y" | pnpm install --prod=false
 
 # Build the shared package first
 RUN cd /app && pnpm --filter=@manga/shared build
