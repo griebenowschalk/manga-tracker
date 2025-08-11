@@ -12,6 +12,7 @@
     "build": "turbo run build",
     "build:backend": "turbo run build --filter=@manga/backend",
     "build:frontend": "turbo run build --filter=@manga/frontend",
+    "build:shared": "turbo run build --filter=@manga/shared",
     "start": "turbo run start",
     "start:backend": "turbo run start --filter=@manga/backend",
     "start:frontend": "turbo run start --filter=@manga/frontend",

@@ -11,6 +11,9 @@ RUN npm install -g pnpm
 # Install dependencies from the root (ensure we're in the right context)
 RUN cd /app && pnpm install
 
+# Build the shared package first
+RUN cd /app && pnpm build:shared
+
 # Build the backend
 RUN cd /app && pnpm build:backend
 
