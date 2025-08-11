@@ -9,10 +9,10 @@ COPY . .
 RUN npm install -g pnpm
 
 # Install dependencies from the root (ensure we're in the right context)
-RUN cd /app && pnpm install
+RUN cd /app && pnpm install --ignore-workspace-root-check
 
 # Build the shared package first
-RUN cd /app && pnpm build:shared
+RUN cd /app && pnpm --filter=@manga/shared build
 
 # Build the backend
 RUN cd /app && pnpm build:backend
