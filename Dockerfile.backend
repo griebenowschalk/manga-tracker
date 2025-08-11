@@ -28,4 +28,4 @@ WORKDIR /app/apps/backend
 
 EXPOSE 3000
 
-CMD ["pnpm", "start:backend"]
+CMD ["pnpm", "start"]
