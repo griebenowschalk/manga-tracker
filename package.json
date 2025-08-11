@@ -10,7 +10,11 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "build:backend": "turbo run build --filter=@manga/backend",
+    "build:frontend": "turbo run build --filter=@manga/frontend",
     "start": "turbo run start",
+    "start:backend": "turbo run start --filter=@manga/backend",
+    "start:frontend": "turbo run start --filter=@manga/frontend",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "format": "turbo run format",

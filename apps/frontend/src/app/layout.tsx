@@ -1,8 +1,9 @@
+import { Metadata } from 'next';
 import { ReactNode } from 'react';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'MangaTracker',
-  description: 'Next.js + Express + Turborepo starter',
+  description: 'Keep track of your manga reading progress',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
