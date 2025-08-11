@@ -3,7 +3,7 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile.backend"
 
 [deploy]
-startCommand = "pnpm start:backend"
+startCommand = "pnpm start"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 300
 
