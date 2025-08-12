@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsup src/server.ts --format esm,cjs --dts --out-dir dist",
-    "postbuild": "prisma generate && prisma migrate deploy",
-    "start": "node --enable-source-maps dist/server.js",
+    "postbuild": "prisma generate",
+    "start": "prisma migrate deploy && node --enable-source-maps dist/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
