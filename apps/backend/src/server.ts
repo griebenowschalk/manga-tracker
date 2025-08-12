@@ -6,7 +6,16 @@ import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
+//Routes
+// import auth from './routes/auth';
+
 const app = express();
+
+// // Middleware
+// if (process.env.NODE_ENV === 'development') {
+//   app.use(morgan('dev'));
+// }
+
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
