@@ -1,4 +1,5 @@
 import type { Prisma } from '@prisma/client';
+import type { RegisterInput as ZodRegisterInput } from '../validations/auth.validation';
 
 export type ExtendedUserCreateInput = Omit<
   Prisma.UserCreateInput,
@@ -11,8 +12,4 @@ export type ExtendedUserCreateArgs = Omit<Prisma.UserCreateArgs, 'data'> & {
   data: ExtendedUserCreateInput;
 };
 
-export type RegisterInput = {
-  displayName: string;
-  email: string;
-  password: string;
-};
+export type RegisterInput = ZodRegisterInput;

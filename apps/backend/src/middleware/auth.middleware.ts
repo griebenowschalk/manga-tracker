@@ -1,6 +1,6 @@
 import type { NextFunction, Response } from 'express';
 import ErrorResponse from '../utils/errors';
-import asyncHandler from './asyncHandler';
+import asyncHandler from './async.middleware';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { prisma } from '../lib/prisma';
 import type { UserRequest } from '../types/query.types';
