@@ -21,9 +21,21 @@ export class UserModel {
   }
 
   // Static methods
-  static async findByEmail(email: string): Promise<UserModel | null> {
-    const user = await prisma.user.findUnique({ where: { email } });
-    return user ? new UserModel(user) : null;
+  static async findByEmail(
+    email: string,
+    includePassword?: boolean
+  ): Promise<UserModel | null> {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        displayName: true,
+        preferences: true,
+        passwordHash: includePassword,
+      },
+    });
+    return user ? new UserModel(user as User) : null;
   }
 
   static async create(data: RegisterInput): Promise<UserModel> {

@@ -45,6 +45,8 @@ app.use(xss());
 
 app.use(cookieParser());
 
+app.set('trust proxy', 1);
+
 app.use(
   cors({
     origin: process.env.FRONTEND_ORIGIN ?? 'http://localhost:3000',

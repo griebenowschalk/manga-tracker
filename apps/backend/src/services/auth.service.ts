@@ -4,6 +4,7 @@ import ErrorResponse from '../utils/errors';
 import jwt, { type SignOptions } from 'jsonwebtoken';
 import crypto from 'crypto';
 import { prisma } from '../lib/prisma';
+import { LoginInput } from '../validations/auth.validation';
 
 class AuthService {
   async register(data: RegisterInput) {
@@ -14,6 +15,16 @@ class AuthService {
     }
 
     const user = await UserModel.create(data);
+
+    return user;
+  }
+
+  async login(data: LoginInput) {
+    const user = await UserModel.findByEmail(data.email, true);
+
+    if (!user || !(await user.validatePassword(data.password))) {
+      throw new ErrorResponse('Invalid credentials', 401);
+    }
 
     return user;
   }
@@ -71,12 +82,13 @@ class AuthService {
 
     const refreshToken = await prisma.refreshToken.findUnique({
       where: { id: decoded?.jti },
-      include: {
-        user: true,
-      },
     });
 
     if (!refreshToken || refreshToken.revoked) {
+      await prisma.refreshToken.updateMany({
+        where: { userId: decoded.id, revoked: false },
+        data: { revoked: true },
+      });
       throw new ErrorResponse('Invalid refresh token', 401);
     }
 
