@@ -30,8 +30,7 @@
     "helmet": "^8.1.0",
     "jose": "^6.0.12",
     "lru-cache": "^11.1.0",
-    "prisma": "^6.13.0",
-    "zod": "^4.0.17"
+    "prisma": "^6.13.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

@@ -2,34 +2,33 @@ import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import ErrorResponse from '../utils/errors';
 
+type ValidationTarget = 'body' | 'query' | 'params';
+
 export const validate =
-  <T extends z.ZodTypeAny>(schema: T) =>
+  <T extends z.ZodTypeAny>(schema: T, targets: ValidationTarget[] = ['body']) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Validate body, query, and params based on schema structure
-      if (schema instanceof z.ZodObject) {
-        // If schema has specific fields, validate accordingly
-        if ('body' in schema.shape) {
-          await schema.shape.body.parseAsync(req.body);
-        }
-        if ('query' in schema.shape) {
-          await schema.shape.query.parseAsync(req.query);
-        }
-        if ('params' in schema.shape) {
-          await schema.shape.params.parseAsync(req.params);
-        }
-      } else {
-        // Default: validate body
-        await schema.parseAsync(req.body);
+      for (const target of targets) {
+        await schema.parseAsync(req[target]);
       }
-
       return next();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return next(
-          new ErrorResponse(error.message || 'Validation failed', 400)
-        );
+        const errorMessage = error.issues
+          .map(e => `${e.path.join('.')}: ${e.message}`)
+          .join(', ');
+        return next(new ErrorResponse(errorMessage, 400));
       }
       return next(new ErrorResponse('Validation failed', 400));
     }
   };
+
+// Convenience functions for common cases
+export const validateBody = <T extends z.ZodTypeAny>(schema: T) =>
+  validate(schema, ['body']);
+
+export const validateQuery = <T extends z.ZodTypeAny>(schema: T) =>
+  validate(schema, ['query']);
+
+export const validateParams = <T extends z.ZodTypeAny>(schema: T) =>
+  validate(schema, ['params']);

@@ -13,3 +13,8 @@ export type ExtendedUserCreateArgs = Omit<Prisma.UserCreateArgs, 'data'> & {
 };
 
 export type RegisterInput = ZodRegisterInput;
+
+export type JwtPayload = {
+  id: string;
+  jti?: string;
+} | null;

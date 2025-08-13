@@ -2,7 +2,6 @@ import { prisma } from '../lib/prisma';
 import type { User } from '@prisma/client';
 import { comparePassword, hashPassword } from '../utils/auth';
 import { RegisterInput } from '../types/auth.types';
-import jwt, { type SignOptions } from 'jsonwebtoken';
 
 export class UserModel {
   constructor(private user: User) {}
@@ -19,16 +18,6 @@ export class UserModel {
     });
     this.user = updated;
     return updated;
-  }
-
-  getSignedJwtToken() {
-    return jwt.sign(
-      { id: this.user.id },
-      process.env.JWT_SECRET as string,
-      {
-        expiresIn: process.env.JWT_EXPIRE as string,
-      } as SignOptions
-    );
   }
 
   // Static methods
