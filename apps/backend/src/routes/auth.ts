@@ -1,5 +1,14 @@
 import { Router } from 'express';
-import { getMe, login, logout, refresh, register } from '../controllers/auth';
+import {
+  forgotPassword,
+  getMe,
+  login,
+  logout,
+  refresh,
+  register,
+  resetPassword,
+  updatePassword,
+} from '../controllers/auth';
 import { validateBody } from '../middleware/validation.middleware';
 import { loginSchema, registerSchema } from '../validations/auth.validation';
 import { protect, requireCsrf } from '../middleware/auth.middleware';
@@ -13,5 +22,8 @@ router.post('/login', validateBody(loginSchema), login);
 router.post('/refresh', refresh);
 router.post('/logout', logout);
 router.get('/me', protect, getMe);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password/:token', resetPassword);
+router.put('/update-password', protect, updatePassword);
 
 export default router;

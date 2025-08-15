@@ -101,6 +101,59 @@ class AuthService {
       data: { revoked: true },
     });
   }
+
+  async generateResetToken(userId: string) {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60);
+
+    await prisma.resetToken.create({
+      data: { id: crypto.randomUUID(), userId, token: resetToken, expiresAt },
+    });
+    return resetToken;
+  }
+
+  async validateResetToken(token: string) {
+    const resetToken = await prisma.resetToken.findFirst({
+      where: { token, expiresAt: { gt: new Date() }, used: false },
+    });
+
+    if (!resetToken) {
+      throw new ErrorResponse('Invalid reset token', 401);
+    }
+
+    await prisma.resetToken.update({
+      where: { id: resetToken.id },
+      data: { used: true },
+    });
+
+    return resetToken.userId;
+  }
+
+  async updateUserPassword(
+    userId: string,
+    password: string,
+    oldPassword?: string
+  ) {
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw new ErrorResponse('User not found', 404);
+    }
+
+    if (oldPassword) {
+      if (!(await user.validatePassword(oldPassword))) {
+        throw new ErrorResponse('Invalid old password', 401);
+      }
+    }
+
+    await user.updatePassword(password);
+
+    // Revoke all refresh tokens for security
+    await prisma.refreshToken.updateMany({
+      where: { userId, revoked: false },
+      data: { revoked: true },
+    });
+  }
 }
 
 export default new AuthService();

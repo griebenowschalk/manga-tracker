@@ -33,6 +33,7 @@
     "prisma": "^6.13.0"
   },
   "devDependencies": {
+    "@react-email/render": "^1.2.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
@@ -48,6 +49,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "nodemon": "^3.1.10",
+    "resend": "^6.0.1",
     "tsup": "^8.5.0",
     "tsx": "^4.20.3",
     "typescript": "^5.9.2"

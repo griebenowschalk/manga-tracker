@@ -38,6 +38,14 @@ export class UserModel {
     return user ? new UserModel(user as User) : null;
   }
 
+  static async findById(id: string): Promise<UserModel | null> {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: { id: true, email: true, displayName: true, preferences: true },
+    });
+    return user ? new UserModel(user as User) : null;
+  }
+
   static async create(data: RegisterInput): Promise<UserModel> {
     const user = await prisma.user.create({
       data: {

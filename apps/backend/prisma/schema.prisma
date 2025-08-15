@@ -25,6 +25,7 @@ model User {
   favorites     Favorite[]
   progress      ReadProgress[]
   refreshTokens RefreshToken[]
+  resetTokens   ResetToken[]
 }
 
 model Favorite {
@@ -59,6 +60,18 @@ model RefreshToken {
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model ResetToken {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String
+  expiresAt DateTime
+  used      Boolean  @default(false)
   createdAt DateTime @default(now())
 
   @@index([userId])
