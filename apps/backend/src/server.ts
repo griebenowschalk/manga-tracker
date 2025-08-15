@@ -12,11 +12,12 @@ dotenv.config();
 
 //Routes
 import authRouter from './routes/auth';
+import usersRouter from './routes/users';
 
 const app = express();
 
 // Middleware
-import asyncHandler from './middleware/async.middleware';
+import { asyncHandler } from './middleware/async.middleware';
 import errorHandler from './middleware/error.middleware';
 
 if (process.env.NODE_ENV === 'development') {
@@ -59,6 +60,7 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
 // TODO: mount routes
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', usersRouter);
 // app.use('/api/search', searchRouter);
 
 // Error handler

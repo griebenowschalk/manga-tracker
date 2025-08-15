@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { prisma } from '../lib/prisma';
 
 export const hashPassword = async (password: string) => {
   const salt = await bcrypt.genSalt(10);
@@ -31,4 +32,14 @@ export const parseTimeString = (timeString: string) => {
   }
 
   return totalMilliseconds;
+};
+
+export const getUserSelect = () => {
+  return {
+    ...Object.fromEntries(
+      Object.entries(prisma.user.fields)
+        .filter(([k]) => k !== 'passwordHash')
+        .map(([k]) => [k, true])
+    ),
+  };
 };

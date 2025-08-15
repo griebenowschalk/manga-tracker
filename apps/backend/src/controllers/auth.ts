@@ -1,5 +1,5 @@
 import type { CookieOptions, Request, Response } from 'express';
-import asyncHandler from '../middleware/async.middleware';
+import { asyncHandler } from '../middleware/async.middleware';
 import authService from '../services/auth.service';
 import ErrorResponse from '../utils/errors';
 import { parseTimeString } from '../utils/auth';

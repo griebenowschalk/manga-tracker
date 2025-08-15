@@ -1,12 +1,12 @@
 import type { NextFunction, Request, Response } from 'express';
 import ErrorResponse from '../utils/errors';
-import asyncHandler from './async.middleware';
+import { asyncHandler } from './async.middleware';
 import { prisma } from '../lib/prisma';
 import type { UserRequest } from '../types/query.types';
-import { User } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import authService from '../services/auth.service';
 
-export const protect = asyncHandler(
+const protect = asyncHandler(
   async (req: UserRequest, res: Response, next: NextFunction) => {
     let token: string | undefined;
 
@@ -44,7 +44,7 @@ export const protect = asyncHandler(
  *  Require x-csrf-token header to match cookie on state-changing routes
  */
 
-export const requireCsrf = asyncHandler(
+const requireCsrf = asyncHandler(
   async (req: Request, _res: Response, next: NextFunction) => {
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
       if (req.headers['x-csrf-token'] !== req.cookies['XSRF-TOKEN']) {
@@ -54,3 +54,19 @@ export const requireCsrf = asyncHandler(
     next();
   }
 );
+
+const authorize = (...roles: Role[]) => {
+  return (req: UserRequest, _res: Response, next: NextFunction) => {
+    if (!roles.includes(req.user?.role as Role)) {
+      return next(
+        new ErrorResponse(
+          `User role ${req.user?.role} is not authorized to access this route`,
+          403
+        )
+      );
+    }
+    next();
+  };
+};
+
+export { protect, requireCsrf, authorize };
