@@ -8,9 +8,14 @@ import {
   register,
   resetPassword,
   updatePassword,
+  updateDetails,
 } from '../controllers/auth';
 import { validateBody } from '../middleware/validation.middleware';
-import { loginSchema, registerSchema } from '../validations/auth.validation';
+import {
+  loginSchema,
+  registerSchema,
+  updateUserDetailsSchema,
+} from '../validations/auth.validation';
 import { protect, requireCsrf } from '../middleware/auth.middleware';
 
 const router: Router = Router();
@@ -25,5 +30,11 @@ router.get('/me', protect, getMe);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
 router.put('/update-password', protect, updatePassword);
+router.put(
+  '/update-details',
+  protect,
+  validateBody(updateUserDetailsSchema),
+  updateDetails
+);
 
 export default router;

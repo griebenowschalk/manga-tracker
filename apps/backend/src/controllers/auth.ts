@@ -181,6 +181,26 @@ const updatePassword = asyncHandler(async (req: UserRequest, res: Response) => {
     .json({ success: true, data: 'Password updated successfully' });
 });
 
+/**
+ * @description Update user details
+ * @route PUT /api/v1/auth/update-details
+ * @access Private
+ */
+const updateDetails = asyncHandler(async (req: UserRequest, res: Response) => {
+  const { displayName, email, preferences } = req.body;
+  const userId = req.user?.id;
+  await authService.updateUserDetails(userId || '', {
+    displayName,
+    email,
+    preferences,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: 'User details updated successfully',
+  });
+});
+
 export {
   register,
   login,
@@ -190,4 +210,5 @@ export {
   forgotPassword,
   resetPassword,
   updatePassword,
+  updateDetails,
 };

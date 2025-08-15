@@ -1,7 +1,7 @@
 import { prisma } from '../lib/prisma';
 import type { User } from '@prisma/client';
 import { comparePassword, hashPassword } from '../utils/auth';
-import { RegisterInput } from '../types/auth.types';
+import { RegisterInput, UpdateUserDetailsInput } from '../types/auth.types';
 
 export class UserModel {
   constructor(private user: User) {}
@@ -18,6 +18,22 @@ export class UserModel {
     });
     this.user = updated;
     return updated;
+  }
+
+  async update(data: UpdateUserDetailsInput) {
+    const user = await prisma.user.update({
+      where: { id: this.user.id },
+      data: {
+        displayName: data.displayName ?? this.user.displayName,
+        email: data.email ?? this.user.email,
+        preferences: Object.assign(
+          {},
+          this.user.preferences ?? {},
+          data.preferences ?? {}
+        ),
+      },
+    });
+    return new UserModel(user);
   }
 
   // Static methods

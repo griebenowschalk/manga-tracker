@@ -1,5 +1,9 @@
 import { UserModel } from '../models/User';
-import { JwtPayload, RegisterInput } from '../types/auth.types';
+import {
+  JwtPayload,
+  RegisterInput,
+  UpdateUserDetailsInput,
+} from '../types/auth.types';
 import ErrorResponse from '../utils/errors';
 import jwt, { type SignOptions } from 'jsonwebtoken';
 import crypto from 'crypto';
@@ -153,6 +157,16 @@ class AuthService {
       where: { userId, revoked: false },
       data: { revoked: true },
     });
+  }
+
+  async updateUserDetails(userId: string, data: UpdateUserDetailsInput) {
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw new ErrorResponse('User not found', 404);
+    }
+
+    return await user.update(data);
   }
 }
 
